@@ -15,9 +15,11 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+	// user creation
 	@Bean
 	public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
-		UserDetails user = User.withUsername("user").password(passwordEncoder.encode("password")).roles("USER").build();
+		// in memory user details
+		UserDetails user = User.withUsername("mukesh").password(passwordEncoder.encode("1234")).roles("USER").build();
 
 		UserDetails admin = User.withUsername("admin").password(passwordEncoder.encode("admin")).roles("USER", "ADMIN")
 				.build();
@@ -25,11 +27,13 @@ public class SecurityConfig {
 		return new InMemoryUserDetailsManager(user, admin);
 	}
 
+	// configuring http security
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeHttpRequests().requestMatchers("/**").permitAll().anyRequest()
-				.authenticated()// Allow registration without authentication
-				.and().formLogin().loginPage("/login").permitAll().and().logout().permitAll();
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http.csrf().disable().authorizeRequests().requestMatchers("/customers/register").permitAll()
+				.requestMatchers("/customers/updateCustomer/**").authenticated()
+				.requestMatchers("/customers/deactivate/**").authenticated().anyRequest().permitAll().and().formLogin()
+				.and().logout().and();
 		return http.build();
 	}
 
@@ -40,41 +44,3 @@ public class SecurityConfig {
 	}
 
 }
-
-/*
- * 
- * // SecurityConfig.java package com.example.customerservice.config;
- * 
- * import org.springframework.context.annotation.Bean; import
- * org.springframework.context.annotation.Configuration; import
- * org.springframework.security.config.annotation.authentication.builders.
- * AuthenticationManagerBuilder; import
- * org.springframework.security.config.annotation.web.builders.HttpSecurity;
- * import org.springframework.security.config.annotation.web.configuration.
- * EnableWebSecurity; import
- * org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder; import
- * org.springframework.security.crypto.password.PasswordEncoder;
- * 
- * @Configuration
- * 
- * @EnableWebSecurity public class SecurityConfig extends
- * WebSecurityConfigurerAdapter {
- * 
- * @Override protected void configure(HttpSecurity http) throws Exception { http
- * .authorizeRequests() .antMatchers("/customers/register").permitAll() // Allow
- * registration without authentication .anyRequest().authenticated() .and()
- * .formLogin() .loginPage("/login") // Customize login page URL .permitAll()
- * .and() .logout() .permitAll(); }
- * 
- * @Override protected void configure(AuthenticationManagerBuilder auth) throws
- * Exception { // In-memory authentication (replace with your own authentication
- * provider) auth .inMemoryAuthentication()
- * .withUser("admin").password(passwordEncoder().encode("admin")).roles("ADMIN")
- * ; }
- * 
- * @Bean public PasswordEncoder passwordEncoder() { return new
- * BCryptPasswordEncoder(); } }
- * 
- * 
- * 
- */
