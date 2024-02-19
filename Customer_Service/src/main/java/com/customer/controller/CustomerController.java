@@ -3,7 +3,6 @@ package com.customer.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +22,7 @@ public class CustomerController {
 	@Autowired
 	private CustomerService customerService;
 
-	@Secured("ROLE_ADMIN")
+	// @Secured("ROLE_ADMIN")
 	@PostMapping("/register")
 	public ResponseEntity<Object> createCustomer(@RequestBody Customer customer) {
 		System.out.println(customer);
@@ -31,7 +30,6 @@ public class CustomerController {
 			Customer createdCustomer = customerService.registerCustomer(customer);
 			return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
 		} catch (Exception e) {
-			// Handle exceptions and return appropriate error messages
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -67,7 +65,7 @@ public class CustomerController {
 		}
 	}
 
-	@Secured("ROLE_USER")
+	// @Secured("ROLE_USER")
 	@PutMapping("updateCustomer/{customerId}")
 	public ResponseEntity<Object> updateCustomer(@PathVariable String customerId,
 
@@ -82,7 +80,7 @@ public class CustomerController {
 		}
 	}
 
-	@Secured("ROLE_ADMIN")
+	// @Secured("ROLE_ADMIN")
 	@DeleteMapping("/deactivate/{customerId}")
 	public ResponseEntity<Object> deactivateCustomer(@PathVariable String customerId) {
 		try {
